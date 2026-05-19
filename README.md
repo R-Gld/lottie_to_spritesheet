@@ -40,8 +40,7 @@ node export-lottie-spritesheet.js \
   <frame-height> \
   <frame-count> \
   [spritesheet.png] \
-  [columns=10] \
-  [fps=30]
+  [columns=10]
 ```
 
 Arguments:
@@ -53,7 +52,6 @@ Arguments:
 - `frame-count`: number of frames to export.
 - `spritesheet.png`: optional output path for the assembled spritesheet.
 - `columns`: optional number of columns in the spritesheet grid. Default: `10`.
-- `fps`: optional framerate used by `ffmpeg` when assembling the sheet. Default: `30`.
 
 ## Examples
 
@@ -74,7 +72,7 @@ node export-lottie-spritesheet.js \
   ./output/loader-stroke-frames \
   302 260 60 \
   ./output/loader-stroke-sheet.png \
-  10 30
+  10
 ```
 
 Use a custom Chrome binary:
@@ -93,5 +91,5 @@ node export-lottie-spritesheet.js \
 - Output frames are PNG with transparency.
 - The animation is rendered with `lottie-web` using the canvas renderer.
 - The spritesheet is assembled with `ffmpeg` using the PNG frames.
-- For a 2-second animation, `60` frames at `30 fps` is usually a good balance between quality, file size, and runtime
-  memory use.
+- For a 2-second animation, `60` exported frames is usually a good balance between quality, file size, and runtime memory
+  use.
