@@ -10,55 +10,15 @@
 
 const fs = require("fs");
 const path = require("path");
-const { createRequire } = require("module");
 const { spawnSync } = require("child_process");
-
-const externalNodeModulesEnv = "LOTTIE_TO_SPRITESHEET_NODE_MODULES";
 
 function usage() {
   console.error(
     [
       "Usage:",
       "  node export-lottie-spritesheet.js <source.json|source.lottie> <frames-dir> <width> <height> <frame-count> [sheet.png] [columns=10] [fps=30]",
-      "",
-      `Set ${externalNodeModulesEnv} when puppeteer-core/lottie-web are installed outside this script directory.`,
     ].join("\n"),
   );
-}
-
-function requireDependency(name) {
-  const candidates = [
-    process.env[externalNodeModulesEnv],
-    path.join(__dirname, "node_modules"),
-    path.join(process.cwd(), "node_modules"),
-  ].filter(Boolean);
-
-  for (const candidate of candidates) {
-    try {
-      return createRequire(path.join(candidate, "package.json"))(name);
-    } catch {
-      // Try the next dependency location.
-    }
-  }
-
-  return require(name);
-}
-
-function resolveDependencyFile(relativePath) {
-  const candidates = [
-    process.env[externalNodeModulesEnv],
-    path.join(__dirname, "node_modules"),
-    path.join(process.cwd(), "node_modules"),
-  ].filter(Boolean);
-
-  for (const candidate of candidates) {
-    const resolved = path.join(candidate, relativePath);
-    if (fs.existsSync(resolved)) {
-      return resolved;
-    }
-  }
-
-  throw new Error(`Unable to find ${relativePath}. Set ${externalNodeModulesEnv}.`);
 }
 
 function buildSpritesheet(framesDir, sheetPath, columns, frameCount, fps) {
@@ -134,8 +94,8 @@ if (![width, height, frameCount, columns, fps].every(Number.isFinite)) {
   process.exit(1);
 }
 
-const puppeteer = requireDependency("puppeteer-core");
-const lottieWebPath = resolveDependencyFile("lottie-web/build/player/lottie.min.js");
+const puppeteer = require("puppeteer-core");
+const lottieWebPath = require.resolve("lottie-web/build/player/lottie.min.js");
 const animationData = loadAnimationData(sourcePath);
 
 fs.mkdirSync(outputDir, { recursive: true });
