@@ -1,0 +1,16 @@
+{
+  "name": "lottie_to_spritesheet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Export Lottie animations to transparent PNG frames and optional PNG spritesheets.",
+  "bin": {
+    "lottie-to-spritesheet": "./export-lottie-spritesheet.js"
+  },
+  "scripts": {
+    "check": "node --check export-lottie-spritesheet.js"
+  },
+  "dependencies": {
+    "lottie-web": "^5.13.0",
+    "puppeteer-core": "^25.0.4"
+  }
+}
