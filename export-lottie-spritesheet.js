@@ -1,13 +1,5 @@
 #!/usr/bin/env node
 
-/*
- * Export a Lottie JSON animation through lottie-web/Chrome into transparent PNG
- * frames, then optionally assemble those frames into a PNG spritesheet.
- *
- * One-time dependency setup example:
- *   npm install
- */
-
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
@@ -16,12 +8,12 @@ function usage() {
   console.error(
     [
       "Usage:",
-      "  node export-lottie-spritesheet.js <source.json|source.lottie> <frames-dir> <width> <height> <frame-count> [sheet.png] [columns=10] [fps=30]",
+      "  node export-lottie-spritesheet.js <source.json|source.lottie> <frames-dir> <width> <height> <frame-count> [sheet.png] [columns=10]",
     ].join("\n"),
   );
 }
 
-function buildSpritesheet(framesDir, sheetPath, columns, frameCount, fps) {
+function buildSpritesheet(framesDir, sheetPath, columns, frameCount) {
   const rows = Math.ceil(frameCount / columns);
   fs.mkdirSync(path.dirname(sheetPath), { recursive: true });
 
@@ -30,13 +22,13 @@ function buildSpritesheet(framesDir, sheetPath, columns, frameCount, fps) {
     [
       "-hide_banner",
       "-y",
-      "-framerate",
-      String(fps),
       "-i",
       path.join(framesDir, "frame_%04d.png"),
       "-vf",
       `tile=${columns}x${rows}`,
       "-frames:v",
+      "1",
+      "-update",
       "1",
       sheetPath,
     ],
@@ -75,8 +67,7 @@ function loadAnimationData(sourcePath) {
   return JSON.parse(fs.readFileSync(sourcePath, "utf8"));
 }
 
-const [, , sourcePath, outputDir, widthArg, heightArg, frameCountArg, sheetPath, columnsArg = "10", fpsArg = "30"] =
-  process.argv;
+const [, , sourcePath, outputDir, widthArg, heightArg, frameCountArg, sheetPath, columnsArg = "10"] = process.argv;
 
 if (!sourcePath || !outputDir || !widthArg || !heightArg || !frameCountArg) {
   usage();
@@ -87,9 +78,8 @@ const width = Number(widthArg);
 const height = Number(heightArg);
 const frameCount = Number(frameCountArg);
 const columns = Number(columnsArg);
-const fps = Number(fpsArg);
 
-if (![width, height, frameCount, columns, fps].every(Number.isFinite)) {
+if (![width, height, frameCount, columns].every(Number.isFinite)) {
   usage();
   process.exit(1);
 }
@@ -193,7 +183,7 @@ fs.mkdirSync(outputDir, { recursive: true });
   }
 
   if (sheetPath) {
-    buildSpritesheet(outputDir, sheetPath, columns, frameCount, fps);
+    buildSpritesheet(outputDir, sheetPath, columns, frameCount);
     console.log(`Wrote spritesheet: ${sheetPath}`);
   }
 })();
